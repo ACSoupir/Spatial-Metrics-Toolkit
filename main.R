@@ -6,7 +6,8 @@ cat("Prepping environment\n")
 # List of packages
 packages <- c("yaml", "optparse", "parallel", "data.table",
               "ggplot2", "tibble", "dplyr", "tidyr",
-              "spatstat.geom", "spatstat.explore", "dbscan")
+              "spatstat.geom", "spatstat.explore", "dbscan",
+              "R.utils")
 
 # Install missing packages 
 missing_packages <- setdiff(packages,names(installed.packages()[,1]))
@@ -68,7 +69,7 @@ createfolders(config)
 #plot functions for raw csv inputs
 #use data.table to import gz
 cat("Plotting xy points\n")
-tmp = mclapply(sfiles, function(p){
+mclapply(sfiles, function(p){
   plot_xy(config, p)
 }, mc.cores = opt$cores)
 
