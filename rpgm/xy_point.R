@@ -1,7 +1,7 @@
 
 plot_xy = function(yaml, path){
   #read in files
-  df = fread(path)
+  df = data.table::fread(path)
   #convert data to long format
   id = unique(df[[yaml$variables$sample_id]])
   #get data
@@ -30,8 +30,11 @@ plot_xy = function(yaml, path){
     guides(shape=guide_legend(title=yaml$variables$tissue_class_label)) +
     coord_equal() +
     theme_classic()
-  pdf(file.path(yaml$paths$output, 'figures/point/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
-      height = 10, width = 10)
-  print(p)
-  dev.off()
+  
+  suppressMessages(ggsave(file.path(yaml$paths$output, 'figures/point', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+         height = 10, width = 10))
+  # pdf(file.path(yaml$paths$output, 'figures/point/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+  #     height = 10, width = 10)
+  # print(p)
+  # dev.off()
 }
