@@ -47,6 +47,14 @@ opt = parse_args(opt_parser)
 cat("Reading yaml\n")
 config = read_yaml(opt$yaml)
 
+#source validation functions
+source("validations.R")
+cat("Running validations\n")
+source("validations.R")
+validate_config(config)
+# example call: function to validate df columns
+# validate_df_columns(df, c("col1", "col2"))
+
 #spatial files
 cat("Identifying spatial files\n")
 sfiles = list.files(config$paths$spatial, 
@@ -61,6 +69,7 @@ source("rpgm/gest.R")
 source("rpgm/dbscan.R")
 source("rpgm/xy_point.R")
 source("rpgm/Summarise_function.R")
+
 
 #prep folder structure
 cat("Creating folder structure\n")
