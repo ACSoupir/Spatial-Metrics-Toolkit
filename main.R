@@ -48,9 +48,9 @@ cat("Reading yaml\n")
 config = read_yaml(opt$yaml)
 
 #source validation functions
-source("validations.R")
+source("rpgm/validations.R")
 cat("Running validations\n")
-source("validations.R")
+source("rpgm/validations.R")
 validate_config(config)
 # example call: function to validate df columns
 # validate_df_columns(df, c("col1", "col2"))
