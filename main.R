@@ -5,7 +5,7 @@
 cat("Prepping environment\n")
 # List of packages
 packages <- c("yaml", "optparse", "parallel", "data.table",
-              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome", "ggpubr",
+              "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome", "ggpubr", "qpdf",
               "spatstat.geom", "spatstat.explore", "dbscan")
 
 # Install missing packages 
@@ -47,19 +47,6 @@ opt = parse_args(opt_parser)
 cat("Reading yaml\n")
 config = read_yaml(opt$yaml)
 
-#source validation functions
-source("rpgm/validations.R")
-cat("Running validations\n")
-source("rpgm/validations.R")
-validate_config(config)
-# example call: function to validate df columns
-# validate_df_columns(df, c("col1", "col2"))
-
-#spatial files
-cat("Identifying spatial files\n")
-sfiles = list.files(config$paths$spatial, 
-                    pattern = 'csv',
-                    full.names = TRUE)
 
 #source functions
 cat("Sourcing functions\n")
@@ -69,7 +56,20 @@ source("rpgm/gest.R")
 source("rpgm/dbscan.R")
 source("rpgm/xy_point.R")
 source("rpgm/Summarise_function.R")
+source("rpgm/validations.R")
+source("rpgm/0.4.cell_distribution_across_samples_boxplot.R")
 
+#source validation functions
+cat("Running validations\n")
+validate_config(config)
+# example call: function to validate df columns
+# validate_df_columns(df, c("col1", "col2"))
+
+#spatial files
+cat("Identifying spatial files\n")
+sfiles = list.files(config$paths$spatial, 
+                    pattern = 'csv',
+                    full.names = TRUE)
 
 #prep folder structure
 cat("Creating folder structure\n")
@@ -120,3 +120,33 @@ tmp = mclapply(names(sm_files), function(m){
   }, mc.allow.recursive = TRUE)
 }, mc.cores = opt$cores, mc.allow.recursive = TRUE)
 
+
+#paulos magic
+# combine all pdf files in /figures ---------------------------------------
+# Create a PDF file for the combined report
+pdf_output_path <- file.path(config$paths$output, "combined_report.pdf")
+output_dir = file.path(config$paths$output,
+                       "figures")
+
+# Find all directories inside the output_dir
+dirs <- list.dirs(output_dir, full.names = TRUE, recursive = FALSE)
+
+# Collect all PDF files in the directory, recursively
+pdf_files <- c()
+for (dir in dirs) {
+  # Find all PDF files in the current directory
+  pdf_files <- c(pdf_files, list.files(dir, pattern = "\\.pdf$", full.names = TRUE, recursive = TRUE))
+}
+
+# Check if there are any PDFs to combine
+if (length(pdf_files) > 0) {
+  cat("Found the following PDF files:\n")
+  print(pdf_files)
+  
+  # Combine the PDFs into one report using qpdf
+  qpdf::pdf_combine(pdf_files, pdf_output_path)
+  
+  cat("Saving combined PDF report to:", pdf_output_path, "\n")
+} else {
+  cat("No PDF files found to combine.\n")
+}

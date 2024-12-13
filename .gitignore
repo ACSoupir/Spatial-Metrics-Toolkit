@@ -60,4 +60,5 @@ output/metrics/.DS_Store
 
 # ST data example
 data/per-cell_ST/
+output_ST/
 config_ST.yml

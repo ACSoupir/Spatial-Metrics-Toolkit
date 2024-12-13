@@ -20,7 +20,7 @@ validate_config <- function(config) {
 
   validate_property(config, "variables")
 
-  required_properties <- c("sample_id", "tissue_class_label",
+  required_properties <- c("sample_id", #"tissue_class_label",
                            "markers", "radii_range")
   for (property in required_properties) {
     validate_property(config$variables, property)

@@ -22,7 +22,7 @@ createfolders <- function(yaml){
   }
   
   #prep metrics folders
-  lapply(yaml$metrics, function(m){
+  tmp = lapply(yaml$metrics, function(m){
     if(!dir.exists(file.path(figures_path, "metrics", m))){
       dir.create(file.path(figures_path, "metrics", m))
     }
