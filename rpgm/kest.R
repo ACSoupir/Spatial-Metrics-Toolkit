@@ -57,6 +57,9 @@ calculate_kest = function(yaml, path){
   fwrite(kest_res,
          file.path(yaml$paths$output, 'metrics/kest/', paste0(basename(gsub(".csv.*", "", path)), ".csv.gz")),
          compress = "gzip")
+  
+  return("Success")
+  
 }
 
 #plot it
@@ -84,4 +87,6 @@ plot_kest = function(config, path){
     print(p)
     dev.off()
   }
+  
+  return("Success")
 }

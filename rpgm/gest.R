@@ -57,6 +57,8 @@ calculate_gest = function(yaml, path){
   fwrite(gest_res,
          file.path(yaml$paths$output, 'metrics/gest/', paste0(basename(gsub(".csv.*", "", path)), ".csv.gz")),
          compress = "gzip")
+  
+  return("Success")
 }
 
 #plot it
@@ -84,4 +86,6 @@ plot_gest = function(config, path){
     print(p)
     dev.off()
   }
+  
+  return("Success")
 }

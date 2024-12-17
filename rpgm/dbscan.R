@@ -38,6 +38,8 @@ calculate_dbscan = function(config, path){
   })
   saveRDS(out,
           file.path(config$paths$output, 'metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".rds")))
+  
+  return("Success")
 }
 
 #plot it
@@ -84,4 +86,5 @@ plot_dbscan = function(config, path){
     print(p)
     dev.off()
   }
+  return("Success")
 }
