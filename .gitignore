@@ -9,6 +9,7 @@
 # User-specific files
 .Ruserdata
 .Rprofile
+Spatial-Metrics-Toolkit.Rproj
 
 # Example code in package build process
 *-Ex.R
