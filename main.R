@@ -7,7 +7,7 @@ cat("Prepping environment\n")
 packages <- c("yaml", "optparse", "parallel", "data.table",
               "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome", "ggpubr",
               "spatstat.geom", "spatstat.explore", "dbscan",
-              "rslurm")
+              "R.utils", "rslurm")
 
 # Install missing packages 
 missing_packages <- setdiff(packages,names(installed.packages()[,1]))
