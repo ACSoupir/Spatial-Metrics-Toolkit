@@ -1,0 +1,53 @@
+variables:
+  sample_id: 'unique_fov'
+  tissue_class: ~
+  tissue_class_label: ~ #column for possibly how to split mIF data otherwise NULL
+  x_value: 'CenterX_local_px'
+  y_value: 'CenterY_local_px'
+  markers:
+  - 'M2 macrophage (CD163)'
+  - 'CD8 T cell'
+  - 'Tumor'
+  - 'Vasa recta endothelium'
+  - 'Fibroblast'
+  - 'Myofibroblast'
+  - 'Regulatory T cell'
+  - 'Neutrophil'
+  - 'Proximal tubule'
+  - 'NK cell'
+  - 'gdT cell'
+  - 'M1 Macrophage (STAT1)'
+  - 'Naive T cell'
+  - 'Podocyte'
+  - 'Collecting duct cell'
+  - 'Possibly Mid-Rep (Misc. Cells)'
+  - 'Plasmacytoid dendritic cell'
+  - 'B cell'
+  - 'Non-classical monocyte'
+  - 'Myeloid DC'
+  - 'Naive CD4 T cell'
+  - 'Mast cell'
+  - 'Intermediate monocyte'
+  - 'Pelvic epithelium'
+  - 'Epithelial progenitor cell'
+  - 'Principal cell'
+  - 'Naive B cell'
+  - 'Capillary endothelium'
+  - 'Intercalated Cell'
+  - 'Glomerular endothelium'
+  - 'Classical monocyte'
+  radii_range: 0:300
+  permute: FALSE
+metrics:
+- 'kest'
+- 'gest'
+- 'dbscan'
+workflows:
+  multiplex_immunofluorescence: yes
+  spatial_transcriptomics: no
+paths:
+  root: "/share/lab_soupir/workflows/Spatial-Metrics-Toolkit"
+  spatial: 'data/per-cell_ST'
+  output: 'output_ST'
+  sample: 'summary.csv'
+slurm: TRUE

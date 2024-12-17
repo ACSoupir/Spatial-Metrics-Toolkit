@@ -51,3 +51,6 @@ rsconnect/
 
 # renv package version tracker
 renv/
+
+# st data
+data/per-cell_ST/*
