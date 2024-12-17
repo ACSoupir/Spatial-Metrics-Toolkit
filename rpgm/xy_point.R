@@ -1,7 +1,7 @@
 
 plot_xy = function(yaml, path){
   #read in files
-  df = data.table::fread(path)
+  df = fread(path)
   #convert data to long format
   id = unique(df[[yaml$variables$sample_id]])
   #get data
