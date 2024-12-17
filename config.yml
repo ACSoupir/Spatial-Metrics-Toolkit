@@ -1,24 +1,30 @@
 variables:
-  sample_id: deidentified_sample #column linking per-cell to summary
-  subject_id: deidentified_id #column linking summary to clinical
-  tissue_class_label: Classifier.Label #column for possibly how to split mIF data otherwise NULL
-  tissue_class: NULL #if subsetting spatial to compartment otherwise NULL
+  sample_id: 'deidentified_sample' #column linking per-cell to summary
+  tissue_class_label: 'Classifier.Label' #column for possibly how to split mIF data otherwise NULL
   markers:
-    - CD3..FOXP3.
-    - CD3..CD8.
-    - CD3..CD8..FOXP3.
-    - CD3..PD1.
-    - CD3..PD.L1.
-    - CD8..PD1.
-    - CD3..CD8..PD.L1.
-    - CD3..Opal.570..Positive
+    - 'CD3..FOXP3.'
+    - 'CD3..CD8.'
+    - 'CD3..CD8..FOXP3.'
+    - 'CD3..PD1.'
+    - 'CD3..PD.L1.'
+    - 'CD8..PD1.'
+    - 'CD3..CD8..PD.L1.'
+    - 'CD3..Opal.570..Positive'
   radii_range: 0:300
   permute: FALSE
+  x_value: "x"
+  y_value: "y"
+metrics:
+  - 'kest'
+  - 'gest'
+  - 'dbscan'
 workflows:
   multiplex_immunofluorescence: TRUE
   spatial_transcriptomics: FALSE #ignored
 paths:
-  spatial: "data/mIF_per-cell" #required
+  root: "/share/lab_soupir/workflows/Spatial-Metrics-Toolkit"
+  spatial: "data/per-cell" #required
   output: "output" #where output to go
-  clinical: "data/clinical.csv" #required
-  sample: "data/mif_summary.csv" #required to have link from sample to subject
+  sample: "summary.csv" #location of output summary
+slurm: TRUE
+cores: 1
