@@ -1,4 +1,3 @@
-library(rslurm)
 get_wd = function(wd = "NULL"){
   setwd(wd)
   
@@ -6,9 +5,7 @@ get_wd = function(wd = "NULL"){
   return(v)
 }
 
-params = data.frame(wd = c("/share/lab_soupir/", "/share/lab_soupir/workflows/Spatial-Metrics-Toolkit"))
-
-get_slurm_out2 = function (slr_job, outtype = "raw", wait = TRUE, ncores = NULL) 
+get_slurm_out = function (slr_job, outtype = "raw", wait = TRUE, ncores = NULL) 
 {
   if (!(inherits(slr_job, "slurm_job"))) {
     stop("slr_job must be a slurm_job")

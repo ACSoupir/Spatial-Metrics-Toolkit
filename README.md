@@ -4,6 +4,8 @@
 
 The Spatial Metrics Toolkit is designed to automate the computation of spatial summary metrics for tissue microenvironment data. This tool supports scalable and flexible analysis, enabling researchers to extract meaningful insights from spatial proteomics and transcriptomics data.
 
+Within the config file, the specification of `slurm` as true or false will tell the Toolkit what kind of backend to use. If set to `TRUE`, the Toolkit will attempt to find the location of SLURM on the system and if present, will spawn jobs using it. If not able to locate it, then the Toolkit will default back to using the `parallel` package. The implementation of SLURM will allow for jobs to be distributed across nodes on a multi-node HPC while `parallel` has the limitation of working on a single node.
+
 ## Input Data Format
 
 The input data must be a CSV file with the following required columns:
@@ -50,6 +52,8 @@ Once your data is formatted correctly: 1. Place your CSV file in the `data/per-c
     -   `variables`: Use this to specify variables for analyses.
         -   `markers`: columns that are used to identify the cell types
         -   `x_value`/`y_value`: column specifying the location of centroid of cells
+    -   `slurm`: `TRUE`/`FALSE` for whether or not to use SLURM
+        -   If set to `TRUE`, will look to ensure SLURM is available on the system. If not available, will fall back to single-node parallel processing
 
 2.  **Command-line Execution**\
     Use the following command to run the toolkit:

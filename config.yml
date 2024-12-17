@@ -22,6 +22,9 @@ workflows:
   multiplex_immunofluorescence: TRUE
   spatial_transcriptomics: FALSE #ignored
 paths:
+  root: "/share/lab_soupir/workflows/Spatial-Metrics-Toolkit"
   spatial: "data/per-cell" #required
   output: "output" #where output to go
   sample: "summary.csv" #location of output summary
+slurm: TRUE
+cores: 1
