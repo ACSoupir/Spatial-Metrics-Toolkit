@@ -1,5 +1,7 @@
 #calculate the metric
 calculate_dbscan = function(config, path){
+  #set correct path
+  setwd(config$paths$root)
   #read in files
   df = fread(path, data.table = FALSE)
   #split based on the classifier label colun
@@ -44,6 +46,8 @@ calculate_dbscan = function(config, path){
 
 #plot it
 plot_dbscan = function(config, path){
+  #set correct path
+  setwd(config$paths$root)
   db_res = readRDS(path)
   #convert results to table
   out = lapply(names(db_res), function(t){
