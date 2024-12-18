@@ -1,12 +1,34 @@
 # Spatial Metrics Toolkit
 
+## Table of Contents
+1. [Overview](#overview)
+2. [Input Data Requirements](#input-data-requirements)
+3. [Preparing Your Data](#preparing-your-data)
+4. [Usage Instructions](#usage-instructions)
+5. [Output](#output)
+6. [Installation](#installation)
+7. [License](#license)
+
+---
+
 ## Overview
 
-The Spatial Metrics Toolkit is designed to automate the computation of spatial summary metrics for tissue microenvironment data. This tool supports scalable and flexible analysis, enabling researchers to extract meaningful insights from spatial proteomics and transcriptomics data.
+Analyzing large spatial datasets in bioinformatics can quickly become computationally demanding, especially when traditional parallelization approaches like R's parallel `package` (the `mclapply` function) are used. These methods often duplicate the entire dataset across multiple cores, leading to excessive memory usage and potential RAM limitations on standard systems. The **Spatial Metrics Toolkit** is designed to overcome these challenges by adopting an efficient on-disk data processing strategy. Instead of passing large datasets between cores, the toolkit keeps data on disk and reads it in as needed, ensuring minimal memory overhead even for massive datasets.
 
-Within the config file, the specification of `slurm` as true or false will tell the Toolkit what kind of backend to use. If set to `TRUE`, the Toolkit will attempt to find the location of SLURM on the system and if present, will spawn jobs using it. If not able to locate it, then the Toolkit will default back to using the `parallel` package. The implementation of SLURM will allow for jobs to be distributed across nodes on a multi-node HPC while `parallel` has the limitation of working on a single node.
+This approach not only makes the toolkit more memory-efficient but also allows it to scale seamlessly across a range of hardware setups, from personal laptops to high-performance computing (HPC) clusters. When deployed on an HPC environment, the toolkit leverages the power of distributed computing by integrating with SLURM job scheduling. This enables researchers to distribute tasks across multiple nodes, maximizing computational resources and reducing analysis time significantly.
 
-## Input Data Format
+Whether you're working with single-node setups or large multi-node clusters, the **Spatial Metrics Toolkit** provides a flexible and scalable solution for extracting meaningful insights from spatial proteomics and transcriptomics data.
+
+### Key Features
+- **Automated Spatial Metric Calculation**: Effortlessly compute a wide range of spatial summary metrics for large and complex tissue microenvironment datasets.
+- **Scalable Computing**: Supports SLURM for distributed computing on HPC clusters, enabling efficient scaling from single-node to multi-node environments.
+- **Interactive Visualizations**: Generate detailed plots to visualize spatial distributions, clustering behavior, and more, enhancing data interpretation.
+- **Flexible Data Input**: Works seamlessly with standard CSV data formats, making it easy to integrate with existing workflows.
+- **Customizable Metrics**: Add new spatial summary metrics directly via the config.yml file and specify file paths, empowering users to tailor the toolkit to their unique analysis needs.
+
+---
+
+## Input Data Requirements
 
 The input data must be a CSV file with the following required columns:
 
@@ -30,6 +52,8 @@ The input data must be a CSV file with the following required columns:
 -   Marker columns should use consistent naming conventions and binary values only.
 -   The `compartment` column is optional but recommended for stratified analyses.
 
+---
+
 ## Preparing Your Data
 
 1.  **Check your data for missing values:** Ensure there are no missing values in the `x`, `y`, or marker columns. Missing values can cause errors during processing.
@@ -37,39 +61,102 @@ The input data must be a CSV file with the following required columns:
 3.  **Format tissue compartments (optional):** If applicable, include a column indicating tissue compartments. Use consistent and meaningful labels.
 4.  **Save as CSV:** Ensure your file is saved in CSV format with a `.csv` extension.
 
-## Using the Toolkit
+**Tip**: Use tools like R, Python, or Excel for preprocessing. Scripts for common tasks are included in the `rpgm/` directory.
+**Tip**: Use tools like R, Python, or Excel for preprocessing. Scripts for common tasks are included in the `rpgm/` directory.
 
-Once your data is formatted correctly: 1. Place your CSV file in the `data/per-cell/` directory specified by the toolkit. 2. Run the tool using the appropriate command or script (refer to the [Usage Instructions](#usage-instructions) below). 3. Outputs will be saved in a structured folder with summary metrics and visualizations.
+### Setting Up the Configuration File
+
+Before running the toolkit, ensure that the `config.yml` file is properly configured to match your dataset and analysis requirements. The configuration file is used to specify critical parameters for data processing and computation:
+
+- **Column Names**: Set the correct column names for:
+  - **`x_value`**: The column name for the x-coordinate of the cells (e.g., `x`).
+  - **`y_value`**: The column name for the y-coordinate of the cells (e.g., `y`).
+  - **`compartment`** (optional): The column name for tissue compartments, such as `tumor`, `stroma`, or `lymph`. If not applicable, this can be left undefined.
+
+- **Metrics**: Specify the spatial metrics to calculate, such as Ripley’s K, G-function, or DBSCAN clustering, under the `metrics` parameter. For example:
+  ```yaml
+  metrics:
+    - kest
+    - gest
+    - dbscan
+  ```
+- **Markers**:Define the marker columns used to identify cell types under the markers section. Example:
+  ```yaml
+  markers:
+    - CD3
+    - CD20
+    - CD68
+
+  ```
+- **SLURM**: Enable or disable SLURM-based parallelization with the `slurm` parameter:
+  - `TRUE` to use SLURM on an HPC.
+  - `FALSE` to fall back to single-node parallel processing using the `parallel` package.
+
+---
 
 ## Usage Instructions
 
-1.  **Other Parameters in YAML**
+### Running the Toolkit
+1. Place your formatted CSV file in the `data/per-cell/` directory.
+2. Configure the YAML file (`config.yml`) to specify analysis parameters.
 
-    -   `metrics`: Choose spatial summary metrics [Ripley's K, G-function, DBSCAN] for analyzing point pattern distributions and clustering behavior. 🔍
-        -   `- dbscan`: DBSCAN: Density-based spatial clustering algorithm that groups points with many neighbors within a radius ε while detecting noise, enabling discovery of arbitrary-shaped clusters in spatial data. 📊
-        -   `- kest`: Estimates Ripley's K-function to analyze spatial point patterns by measuring inter-point distances and clustering intensity at multiple scales within any window shape. 📊
-        -   `- gest`: Estimates nearest neighbor distance distribution G(r) to analyze spatial point patterns by measuring point-to-point proximity relationships in any window shape. 📊
-    -   `variables`: Use this to specify variables for analyses.
-        -   `markers`: columns that are used to identify the cell types
-        -   `x_value`/`y_value`: column specifying the location of centroid of cells
-    -   `slurm`: `TRUE`/`FALSE` for whether or not to use SLURM
-        -   If set to `TRUE`, will look to ensure SLURM is available on the system. If not available, will fall back to single-node parallel processing
+#### Example Command
+```bash
+Rscript main.R --yaml config.yml --cores 4
+```
+- `--yaml`: Path to the YAML configuration file.
+- `--cores`: Number of CPU cores to use for parallel processing.
 
-2.  **Command-line Execution**\
-    Use the following command to run the toolkit:
-
-    ``` bash
-    Rscript main.R --yaml config.yml --cores 4
-    ```
-
-    `--yaml`: path to the yaml configuration file. 🛠️
-
-    `--cores`: number of CPU cores to use for parallel processing of data.
+---
 
 ## Output
 
 The toolkit generates:
+1. **Spatial Summary Metrics**: CSV files with computed metrics.
+2. **Visualizations**: Plots showing spatial distribution and clustering.
 
--   **Spatial Summary Metrics:** CSV files containing computed spatial metrics.
+### Example Folder Structure
+```
+output/
+├── metrics/
+|   ├──kest/
+|   |   ├──TMA1_[3,B].tif.csv.gz
+├── figures/
+|   ├──barplot/
+│   │   ├──marker_distribution.pdf
+|   ├──metrics/
+│   │   ├──kest/
+│   │   │   ├──TMA1_[3,B].tif.pdf
+|   ├──point/
+│   │   ├──TMA1_[3,B].tif.pdf
+```
 
--   **Visualizations:** Plots showing spatial distribution and summary analyses.
+---
+
+## Installation
+
+### Prerequisites
+- **R (≥4.0)** with required packages installed (e.g., `parallel`, `yaml`). 
+- SLURM installed for HPC usage (optional).
+
+### Installation Steps
+1. Clone the repository:
+   ```bash
+   git clone <repository_url>
+   ```
+2. Install required R packages:
+
+    Packages should automatically be installed when first running the toolkit. It does help to manually install packages if there are errors. Have noted that system libraries are not always available on HPCs and requires communication with administrators for installing. If manually installing, can be done with:
+   
+   ```R
+   install.packages(c("yaml", "parallel"))
+   ```
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
