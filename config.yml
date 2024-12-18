@@ -18,6 +18,7 @@ metrics:
   - 'kest'
   - 'gest'
   - 'dbscan'
+  - 'full_graph'
 workflows:
   multiplex_immunofluorescence: TRUE
   spatial_transcriptomics: FALSE #ignored

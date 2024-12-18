@@ -80,12 +80,12 @@ plot_dbscan = function(config, path){
     p = p +
       facet_grid(get(config$variables$tissue_class_label)~.)
     
-    pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+    pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".rds.*", "", path)), ".pdf")),
         height = 7, width = 10)
     print(p)
     dev.off()
   } else {
-    pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+    pdf(file.path(config$paths$output, 'figures/metrics/dbscan/', paste0(basename(gsub(".rds.*", "", path)), ".pdf")),
         height = 7, width = 10)
     print(p)
     dev.off()

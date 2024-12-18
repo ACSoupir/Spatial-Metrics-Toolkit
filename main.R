@@ -1,5 +1,6 @@
 #run with
 #"Rscript main.R -y config.yml"
+#moffitt hpc "module load gcc/11.2.0 " dec 18 2024
 
 #global libraries
 cat("Prepping environment\n")
@@ -115,6 +116,7 @@ if(config$slurm){
       if(m == "kest") calculate_kest(config, f)
       if(m == "gest") calculate_gest(config, f)
       if(m == "dbscan") calculate_dbscan(config, f)
+      if(m == "full_graph") full_interaction_graph(config, f)
     }, mc.allow.recursive = TRUE)
   }, mc.cores = config$cores, mc.allow.recursive = TRUE)
 }
@@ -134,7 +136,8 @@ if(config$slurm){
     tmp = mclapply(sm_files[[m]], function(f){
       if(m == "kest") plot_kest(config, f)
       if(m == "gest") plot_gest(config, f)
-      if(m == "dbscan") plot_dbscan(config, f)
+      if(m == "dbscan") plot_dbscan(config, f)#
+      if(m == "full_graph") plot_full_graph(config, f)
     }, mc.allow.recursive = TRUE)
   }, mc.cores = config$cores, mc.allow.recursive = TRUE)
 }

@@ -9,7 +9,8 @@ source("rpgm/dbscan.R")
 source("rpgm/xy_point.R")
 source("rpgm/Summarise_function.R")
 source("rpgm/validations.R")
-source("rpgm/0.4.cell_distribution_across_samples_boxplot.R")
+source("rpgm/plot_marker_distributions.R")
+source("rpgm/full_graph.R")
 
 #slurm helper functions
 source("hpc_rpgm/get_slurm_out.R")

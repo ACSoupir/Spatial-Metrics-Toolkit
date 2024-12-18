@@ -11,7 +11,8 @@ metric_slurm_handler = function(config, sfiles){
     cpus_per_node = 1,
     global_objects = c("calculate_kest",
                        "calculate_gest",
-                       "calculate_dbscan")
+                       "calculate_dbscan",
+                       "full_interaction_graph")
   )
   
   res = get_slurm_out(metric_job, outtype = "raw")
@@ -25,5 +26,6 @@ metric_slurm_shuffler = function(metric, config, path){
   if(metric == "kest") out = calculate_kest(config, path)
   if(metric == "gest") out = calculate_gest(config, path)
   if(metric == "dbscan") out = calculate_dbscan(config, path)
+  if(metric == "full_graph") out = full_interaction_graph(config, path)
   return(out)
 }

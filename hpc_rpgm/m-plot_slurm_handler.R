@@ -11,7 +11,8 @@ mplot_slurm_handler = function(config, sm_files){
     cpus_per_node = 1,
     global_objects = c("plot_kest",
                        "plot_gest",
-                       "plot_dbscan")
+                       "plot_dbscan",
+                       "plot_full_graph", "full_graph_ggplot")
   )
   
   res = get_slurm_out(mplot_job, outtype = "raw")
@@ -25,5 +26,6 @@ mplot_slurm_shuffler = function(metric, config, path){
   if(metric == "kest") out = plot_kest(config, path)
   if(metric == "gest") out = plot_gest(config, path)
   if(metric == "dbscan") out = plot_dbscan(config, path)
+  if(metric == "full_graph") out = plot_full_graph(config, path)
   return(out)
 }
