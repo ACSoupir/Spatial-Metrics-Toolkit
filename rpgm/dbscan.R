@@ -1,7 +1,9 @@
 #calculate the metric
 calculate_dbscan = function(config, path){
   #set correct path
-  setwd(config$paths$root)
+  if(!(getwd() == config$paths$root)){
+    setwd(config$paths$root)
+  }
   #read in files
   df = fread(path, data.table = FALSE)
   #split based on the classifier label colun

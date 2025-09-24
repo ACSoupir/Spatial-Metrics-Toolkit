@@ -114,6 +114,7 @@ if(config$slurm){
   tmp = mclapply(config$metrics, function(m){
     mclapply(sfiles, function(f){
       if(m == "kest") calculate_kest(config, f)
+      if(m == "kest_exactCSR") calculate_kest_exactCSR(config, f)
       if(m == "gest") calculate_gest(config, f)
       if(m == "dbscan") calculate_dbscan(config, f)
       if(m == "full_graph") full_interaction_graph(config, f)
@@ -135,6 +136,7 @@ if(config$slurm){
   tmp = mclapply(names(sm_files), function(m){
     tmp = mclapply(sm_files[[m]], function(f){
       if(m == "kest") plot_kest(config, f)
+      if(m == "kest_exactCSR") plot_kest_exactCSR(config, f)
       if(m == "gest") plot_gest(config, f)
       if(m == "dbscan") plot_dbscan(config, f)#
       if(m == "full_graph") plot_full_graph(config, f)
