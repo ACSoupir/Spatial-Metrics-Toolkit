@@ -1,10 +1,24 @@
 
-#calculate kest
-calculate_kest_exactCSR = function(config, path){
+#NN G exact
+#https://github.com/ACSoupir/PermFree-NearestNeighborG/
+Rcpp::sourceCpp("src/compute_neighbor_counts_opt.cpp")
+#faster matrix mulipliation
+Rcpp::sourceCpp("src/mat_mult_eigen.cpp")
+
+#combinatorial calculations in log space for large N samples
+log_comb = function(n, k) {
+  lgamma(n + 1) - (lgamma(k + 1) + lgamma(n - k + 1))
+}
+
+binom_prob = function(n, k, x) {
+  exp(log_comb(n - x, k) - log_comb(n, k))
+}
+
+
+#calculate gest
+calculate_gest_exactCSR = function(config, path){
   #set correct path
-  if(!(getwd() == config$paths$root)){
-    setwd(config$paths$root)
-  }
+  setwd(config$paths$root)
   #read in files
   df = fread(path)
   #split based on the classifier label colun
@@ -21,14 +35,11 @@ calculate_kest_exactCSR = function(config, path){
   #point pattern objects
   pp_objs = lapply(seq(df_list), function(l){
     x = df_list[[l]]
-    marks = x[,config$variables$markers, with = FALSE]
-    marks[] = lapply(marks, as.factor)
     ppp(x[[config$variables$x_value]], 
         x[[config$variables$y_value]], window = windows[[l]],
-        marks = marks)
+        marks = x[,config$variables$markers, with = FALSE])
   })
-  #calucalte k with exact CSR
-  kest_res = lapply(seq(df_list), function(l){
+  gest_res = lapply(seq(df_list), function(l){
     p = pp_objs[[l]]
     # x = df_list[[l]] %>%
     #   as.data.frame(check.names = FALSE)
@@ -41,25 +52,25 @@ calculate_kest_exactCSR = function(config, path){
           mutate(Marker = marker, 
                  .before = 1)
       } else {
-        obs = Kest(p2, r=eval(parse(text = config$variables$radii_range))) %>%
+        out = Gest(p2, r=eval(parse(text = config$variables$radii_range)), correction = "none") %>% #don't know whether edge correction alters the results of if it cancels out
           as.data.frame(check.names = FALSE) %>%
-          select(-theo) %>%
           mutate(Marker = marker, 
                  .before = 1)
-        exact = Kest(p, r=eval(parse(text = config$variables$radii_range))) %>%
-          as.data.frame(check.names = FALSE) %>%
-          select(-theo) %>%
-          rename_at(-1, ~ paste0(.x, "_exact")) %>%
-          mutate(Marker = marker, 
-                 .before = 1)
-        out = full_join(obs, exact, by = join_by(Marker, r))
+        pcells = npoints(p2)
+        n_points = npoints(p)
+        counts = compute_neighbor_counts_opt(p$x, p$y, eval(parse(text = config$variables$radii_range)))
+        binom_vals = binom_prob(n_points-1, pcells-1, counts)
+        summation2 = colSums(binom_vals)
+        
+        exact_csr_values = 1 - (1 / n_points) * summation2
+        
+        out$exactCSR = exact_csr_values
       }
       return(out)
-     
     }) %>%
       do.call(bind_rows, .)
     
-    
+    #compartment if needed
     if(!is.null(config$variables$tissue_class_label)){
       res %>%
         mutate(!!config$variables$tissue_class_label := names(df_list)[l]) %>%
@@ -72,44 +83,36 @@ calculate_kest_exactCSR = function(config, path){
     do.call(bind_rows, .) %>%
     dplyr::mutate(!!config$variables$sample_id := unique(df[[config$variables$sample_id]]),
                   .before = 1)
-  fwrite(kest_res,
-         file.path(config$paths$output, 'metrics/kest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".csv.gz")),
+  fwrite(gest_res,
+         file.path(config$paths$output, 'metrics/gest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".csv.gz")),
          compress = "gzip")
   
   return("Success")
-  
 }
 
 #plot it
-plot_kest_exactCSR = function(config, path){
+plot_gest_exactCSR = function(config, path){
   #set correct path
   setwd(config$paths$root)
   df = fread(path, data.table = FALSE) %>%
     mutate(r = as.numeric(r))
-  observed_cols = c('border', 'trans', 'iso')
-  observed_cols = observed_cols[observed_cols %in% colnames(df)]
-  for(cname in observed_cols){
-    df[[paste0(cname, "_adjusted")]] = df[[cname]] - df[[paste0(cname, "_exact")]]
-  }
   if(!is.null(config$variables$tissue_class_label)){
     p = df %>%
-      pivot_longer(cols = contains("adjusted"), names_to = "edge_correction", values_to = "clustering") %>%
-      ggplot() + 
-      geom_line(aes(x = r, y = clustering, color = Marker, linetype = edge_correction)) +
+      ggplot() +
+      geom_line(aes(x = r, y = raw - exactCSR, color = Marker)) +
       facet_grid(get(config$variables$tissue_class_label)~.) +
       theme_classic()
     
-    pdf(file.path(config$paths$output, 'figures/metrics/kest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+    pdf(file.path(config$paths$output, 'figures/metrics/gest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
         height = 7, width = 10)
     print(p)
     dev.off()
   } else {
     p = df %>%
-      pivot_longer(cols = contains("adjusted"), names_to = "edge_correction", values_to = "clustering") %>%
-      ggplot() + 
-      geom_line(aes(x = r, y = clustering, color = Marker, linetype = edge_correction)) +
+      ggplot() +
+      geom_line(aes(x = r, y = raw - exactCSR, color = Marker)) +
       theme_classic()
-    pdf(file.path(config$paths$output, 'figures/metrics/kest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
+    pdf(file.path(config$paths$output, 'figures/metrics/gest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
         height = 6, width = 10)
     print(p)
     dev.off()

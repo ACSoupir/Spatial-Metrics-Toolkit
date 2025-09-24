@@ -8,7 +8,7 @@ cat("Prepping environment\n")
 packages <- c("yaml", "optparse", "parallel", "data.table",
               "ggplot2", "tibble", "dplyr", "tidyr", "Polychrome", "ggpubr",
               "spatstat.geom", "spatstat.explore", "dbscan",
-              "R.utils", "rslurm")
+              "R.utils", "rslurm", "RcppEigen", "Rcpp")
 
 # Install missing packages 
 missing_packages <- setdiff(packages,names(installed.packages()[,1]))
@@ -116,6 +116,7 @@ if(config$slurm){
       if(m == "kest") calculate_kest(config, f)
       if(m == "kest_exactCSR") calculate_kest_exactCSR(config, f)
       if(m == "gest") calculate_gest(config, f)
+      if(m == "gest_exactCSR") calculate_gest_exactCSR(config, f)
       if(m == "dbscan") calculate_dbscan(config, f)
       if(m == "full_graph") full_interaction_graph(config, f)
     }, mc.allow.recursive = TRUE)
@@ -138,6 +139,7 @@ if(config$slurm){
       if(m == "kest") plot_kest(config, f)
       if(m == "kest_exactCSR") plot_kest_exactCSR(config, f)
       if(m == "gest") plot_gest(config, f)
+      if(m == "gest_exactCSR") plot_gest_exactCSR(config, f)
       if(m == "dbscan") plot_dbscan(config, f)#
       if(m == "full_graph") plot_full_graph(config, f)
     }, mc.allow.recursive = TRUE)

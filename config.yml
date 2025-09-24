@@ -18,6 +18,7 @@ metrics:
   - 'kest'
   - 'kest_exactCSR'
   - 'gest'
+  - 'gest_exactCSR'
   - 'dbscan'
   - 'full_graph'
 workflows:
