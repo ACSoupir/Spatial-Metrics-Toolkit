@@ -64,6 +64,7 @@ source("rpgm/source_functions.R")
 #source validation functions
 cat("Running validations\n")
 validate_config(config)
+config = validate_bivar(config)
 # example call: function to validate df columns
 # validate_df_columns(df, c("col1", "col2"))
 
@@ -113,12 +114,18 @@ if(config$slurm){
 } else {
   tmp = mclapply(config$metrics, function(m){
     mclapply(sfiles, function(f){
+      #univariate
       if(m == "kest") calculate_kest(config, f)
       if(m == "kest_exactCSR") calculate_kest_exactCSR(config, f)
       if(m == "gest") calculate_gest(config, f)
       if(m == "gest_exactCSR") calculate_gest_exactCSR(config, f)
       if(m == "dbscan") calculate_dbscan(config, f)
       if(m == "full_graph") full_interaction_graph(config, f)
+      #bivariate
+      if(m == "kcross") calculate_kcross(config, f)
+      if(m == "kcross_exactCSR") calculate_kcross_exact(config, f)
+      if(m == "gcross") calculate_gcross(config, f)
+      if(m == "gcross_exactCSR") calculate_gcross_exact(config, f)
     }, mc.allow.recursive = TRUE)
   }, mc.cores = config$cores, mc.allow.recursive = TRUE)
 }
@@ -142,6 +149,11 @@ if(config$slurm){
       if(m == "gest_exactCSR") plot_gest_exactCSR(config, f)
       if(m == "dbscan") plot_dbscan(config, f)#
       if(m == "full_graph") plot_full_graph(config, f)
+      #bivariate
+      if(m == "kcross") plot_kcross(config, f)
+      if(m == "kcross_exactCSR") plot_kcross_exact(config, f)
+      if(m == 'gcross') plot_gcross(config, f)
+      if(m == "gcross_exactCSR") plot_gcross_exact(config, f)
     }, mc.allow.recursive = TRUE)
   }, mc.cores = config$cores, mc.allow.recursive = TRUE)
 }

@@ -11,14 +11,20 @@ variables:
     - 'CD3..CD8..PD.L1.'
     - 'CD3..Opal.570..Positive'
   radii_range: 0:300
-  permute: FALSE
   x_value: "x"
   y_value: "y"
+  bivar_pairs: #either ['all', 'all'], or ['marker1', 'marker2']
+    - ['CD3..FOXP3.', 'CD3..CD8.']
+    - ['CD3..PD.L1.', 'CD3..CD8.']
 metrics:
   - 'kest'
   - 'kest_exactCSR'
+  - 'kcross'
+  - 'kcross_exactCSR'
   - 'gest'
   - 'gest_exactCSR'
+  - 'gcross'
+  - 'gcross_exactCSR'
   - 'dbscan'
   - 'full_graph'
 workflows:

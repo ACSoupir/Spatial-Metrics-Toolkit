@@ -107,7 +107,8 @@ plot_kest_exactCSR = function(config, path){
     p = df %>%
       pivot_longer(cols = contains("adjusted"), names_to = "edge_correction", values_to = "clustering") %>%
       ggplot() + 
-      geom_line(aes(x = r, y = clustering, color = Marker, linetype = edge_correction)) +
+      geom_line(aes(x = r, y = clustering, color = Marker, linetype = edge_correction)) + 
+      facet_grid(. ~ Anchor) +
       theme_classic()
     pdf(file.path(config$paths$output, 'figures/metrics/kest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
         height = 6, width = 10)

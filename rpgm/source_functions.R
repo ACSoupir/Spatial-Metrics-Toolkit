@@ -14,6 +14,12 @@ source("rpgm/validations.R")
 source("rpgm/plot_marker_distributions.R")
 source("rpgm/full_graph.R")
 
+#bivariate
+source("rpgm/kcross.r")
+source("rpgm/kcross_exactCSR.r")
+source("rpgm/gcross.r")
+source("rpgm/gcross_exactCSR.r")
+
 #slurm helper functions
 source("hpc_rpgm/get_slurm_out.R")
 source("hpc_rpgm/xy_slurm_handler.R")
