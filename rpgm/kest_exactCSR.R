@@ -87,7 +87,7 @@ plot_kest_exactCSR = function(config, path){
   df = fread(path, data.table = FALSE) %>%
     mutate(r = as.numeric(r))
   observed_cols = c('border', 'trans', 'iso')
-  observed_cols = observed_cols[observed_cols %in% colnames(df)]
+  observed_cols = observed_cols[paste0(observed_cols, "_exact") %in% colnames(df)]
   for(cname in observed_cols){
     df[[paste0(cname, "_adjusted")]] = df[[cname]] - df[[paste0(cname, "_exact")]]
   }
@@ -108,7 +108,6 @@ plot_kest_exactCSR = function(config, path){
       pivot_longer(cols = contains("adjusted"), names_to = "edge_correction", values_to = "clustering") %>%
       ggplot() + 
       geom_line(aes(x = r, y = clustering, color = Marker, linetype = edge_correction)) + 
-      facet_grid(. ~ Anchor) +
       theme_classic()
     pdf(file.path(config$paths$output, 'figures/metrics/kest_exactCSR/', paste0(basename(gsub(".csv.*", "", path)), ".pdf")),
         height = 6, width = 10)

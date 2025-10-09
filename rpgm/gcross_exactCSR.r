@@ -5,6 +5,10 @@ calculate_gcross_exact = function(config, path){
   if(!(getwd() == config$paths$root)){
     setwd(config$paths$root)
   }
+  #assuming the user handles root correctly
+  Rcpp::sourceCpp("src/compute_neighbor_counts_grid.cpp")
+  #faster matrix mulipliation
+  Rcpp::sourceCpp("src/mat_mult_eigen.cpp")
   #read in files
   df = fread(path)
   #split based on the classifier label colun
@@ -29,6 +33,7 @@ calculate_gcross_exact = function(config, path){
   })
   gcross_res = lapply(seq(df_list), function(l){
     p = pp_objs[[l]]
+    counts_all = compute_neighbor_counts_grid(p$x, p$y, eval(parse(text = config$variables$radii_range))) 
     #pairs
     res = lapply(config$variables$bivar_pairs, function(markers){
       #find cells to subset to
@@ -60,9 +65,9 @@ calculate_gcross_exact = function(config, path){
         nA = length(A_idx)
         K = length(B_idx)
         radii = obs$r
-        counts_all = compute_neighbor_counts_opt(p$x, p$y, radii) 
-        counts_A   = counts_all[A_idx, , drop = FALSE]
-        zero_hit_probs = binom_prob(n = N - 1, k = counts_all, x = K)
+        #counts_all = compute_neighbor_counts_grid(p$x, p$y, radii) 
+        #counts_A   = counts_all[A_idx, , drop = FALSE]
+        zero_hit_probs = binom_prob(n = N - 1, k = counts_all[,seq_along(radii)], x = K)
         Gcross_exact = 1 - (1 / N) * colSums(zero_hit_probs)
         obs$raw_exact = Gcross_exact
         return(obs)
@@ -129,7 +134,7 @@ plot_gcross_exact = function(config, path){
     c_num = length(unique(df$Anchor))
     p = df %>%
       ggplot() + 
-      geom_line(aes(x = r, y = rs - theo, color = Counted)) +
+      geom_line(aes(x = r, y = raw - raw_exact, color = Counted)) +
       facet_grid(. ~ Anchor) +
       theme_classic()
     

@@ -91,7 +91,7 @@ plot_kcross_exact = function(config, path){
   df = fread(path, data.table = FALSE) %>%
     mutate(r = as.numeric(r))
   observed_cols = c('border', 'trans', 'iso')
-  observed_cols = observed_cols[observed_cols %in% colnames(df)]
+  observed_cols = observed_cols[paste0(observed_cols, "_exact") %in% colnames(df)]
   for(cname in observed_cols){
     df[[paste0(cname, "_adjusted")]] = df[[cname]] - df[[paste0(cname, "_exact")]]
   }

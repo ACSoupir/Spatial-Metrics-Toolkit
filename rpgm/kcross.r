@@ -49,7 +49,7 @@ calculate_kcross = function(config, path){
           dplyr::filter(positive == 1)
         p2 = subset(p, cells$id)
         marks(p2) = factor(cells$marker, levels = markers)
-        out = Kcross(p2, r=eval(parse(text = config$variables$radii_range))) %>%
+        out = Kcross(p2, r=eval(parse(text = config$variables$radii_range)), nlarge = 10000) %>%
           as.data.frame(check.names = FALSE) %>%
           mutate(Anchor = markers[1],
                  Counted = markers[2], 

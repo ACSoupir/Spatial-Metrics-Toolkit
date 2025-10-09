@@ -74,7 +74,8 @@ validate_bivar = function(config){
         return(pairs)
       }) %>%
         do.call(dplyr::bind_rows, .) %>%
-        dplyr::filter(marker1 != marker2)
+        dplyr::filter(marker1 != marker2) %>%
+        dplyr::mutate(dplyr::across(dplyr::everything(), ~as.character(.x)))
       config$variables$bivar_pairs = lapply(seq(nrow(out)), function(x) as.character(out[x,]))
     } else {
       stop("Error: Bivariate pairs must be format - ['marker', 'marker']")

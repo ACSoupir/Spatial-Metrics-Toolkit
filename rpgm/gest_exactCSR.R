@@ -2,6 +2,7 @@
 #NN G exact
 #https://github.com/ACSoupir/PermFree-NearestNeighborG/
 Rcpp::sourceCpp("src/compute_neighbor_counts_opt.cpp")
+Rcpp::sourceCpp("src/compute_neighbor_counts_grid.cpp")
 #faster matrix mulipliation
 Rcpp::sourceCpp("src/mat_mult_eigen.cpp")
 
@@ -19,6 +20,9 @@ binom_prob = function(n, k, x) {
 calculate_gest_exactCSR = function(config, path){
   #set correct path
   setwd(config$paths$root)
+  Rcpp::sourceCpp("src/compute_neighbor_counts_grid.cpp")
+  #faster matrix mulipliation
+  Rcpp::sourceCpp("src/mat_mult_eigen.cpp")
   #read in files
   df = fread(path)
   #split based on the classifier label colun
@@ -41,6 +45,7 @@ calculate_gest_exactCSR = function(config, path){
   })
   gest_res = lapply(seq(df_list), function(l){
     p = pp_objs[[l]]
+    counts = compute_neighbor_counts_grid(p$x, p$y, radii = eval(parse(text = config$variables$radii_range)))
     # x = df_list[[l]] %>%
     #   as.data.frame(check.names = FALSE)
     # id = unique(x[[config$variables$sample_id]])
@@ -58,7 +63,9 @@ calculate_gest_exactCSR = function(config, path){
                  .before = 1)
         pcells = npoints(p2)
         n_points = npoints(p)
-        counts = compute_neighbor_counts_opt(p$x, p$y, eval(parse(text = config$variables$radii_range)))
+        print(eval(parse(text = config$variables$radii_range)))
+        print(head(p$x))
+        print(head(p$y))
         binom_vals = binom_prob(n_points-1, pcells-1, counts)
         summation2 = colSums(binom_vals)
         

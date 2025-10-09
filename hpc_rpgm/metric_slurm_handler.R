@@ -18,7 +18,9 @@ metric_slurm_handler = function(config, sfiles){
                        "calculate_kcross",
                        "calculate_kcross_exact",
                        "calculate_gcross",
-                       "calculate_gcross_exact")
+                       "calculate_gcross_exact",
+                       "log_comb", 
+                       "binom_prob")
   )
   
   res = get_slurm_out(metric_job, outtype = "raw")
@@ -29,6 +31,7 @@ metric_slurm_handler = function(config, sfiles){
 }
 
 metric_slurm_shuffler = function(metric, config, path){
+  print(config)
   if(metric == "kest") out = calculate_kest(config, path)
   if(metric == "kest_exactCSR") out = calculate_kest_exactCSR(config, path)
   if(metric == "gest") out = calculate_gest(config, path)
