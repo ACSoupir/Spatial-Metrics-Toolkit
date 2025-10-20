@@ -90,6 +90,9 @@ plot_kcross_exact = function(config, path){
   setwd(config$paths$root)
   df = fread(path, data.table = FALSE) %>%
     mutate(r = as.numeric(r))
+  if(!("theo" %in% colnames(df))){
+    return("missing metric")
+  }
   observed_cols = c('border', 'trans', 'iso')
   observed_cols = observed_cols[paste0(observed_cols, "_exact") %in% colnames(df)]
   for(cname in observed_cols){

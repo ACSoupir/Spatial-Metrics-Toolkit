@@ -50,7 +50,7 @@ calculate_gest_exactCSR = function(config, path){
     #   as.data.frame(check.names = FALSE)
     # id = unique(x[[config$variables$sample_id]])
     res = lapply(config$variables$markers, function(marker){
-      #print(marker)
+      print(marker)
       p2 = subset(p, marks(p)[[marker]] == 1)
       if(npoints(p2) < 2){
         out = data.frame(r = eval(parse(text = config$variables$radii_range))) %>%
@@ -63,9 +63,9 @@ calculate_gest_exactCSR = function(config, path){
                  .before = 1)
         pcells = npoints(p2)
         n_points = npoints(p)
-        print(eval(parse(text = config$variables$radii_range)))
-        print(head(p$x))
-        print(head(p$y))
+        #print(eval(parse(text = config$variables$radii_range)))
+        #print(head(p$x))
+        #print(head(p$y))
         binom_vals = binom_prob(n_points-1, pcells-1, counts)
         summation2 = colSums(binom_vals)
         

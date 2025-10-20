@@ -85,6 +85,9 @@ plot_gcross = function(config, path){
   setwd(config$paths$root)
   df = fread(path, data.table = FALSE) %>%
     mutate(r = as.numeric(r))
+  if(!("theo" %in% colnames(df))){
+    return("missing metric")
+  }
   if(!is.null(config$variables$tissue_class_label)){
     c_num = length(unique(df$Anchor))
     p = df %>%
